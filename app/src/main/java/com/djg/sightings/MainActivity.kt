@@ -7,42 +7,41 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import com.djg.sightings.navigation.BottomBar
 import com.djg.sightings.navigation.MainNavHost
 import com.djg.sightings.ui.theme.SightingsTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
+    private val ioScope: CoroutineScope by lazy {
+        CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val app = application as MainApplication
+        app.ioScope.launch {
+            app.mockData.scheduleMockAlerts()
+        }
         enableEdgeToEdge()
         setContent {
             SightingsTheme {
                 val navController = rememberNavController()
-                Scaffold(modifier = Modifier.fillMaxSize(), bottomBar = { BottomBar(navController = navController) }) { innerPadding ->
-                    MainNavHost(navController = navController, modifier = Modifier.padding(innerPadding))
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    bottomBar = { BottomBar(navController = navController) }) { innerPadding ->
+                    MainNavHost(
+                        navController = navController,
+                        modifier = Modifier.padding(innerPadding)
+                    )
                 }
             }
         }
     }
 }
-
-//@Composable
-//fun Greeting(name: String, modifier: Modifier = Modifier) {
-//    Text(
-//        text = "Hello $name!",
-//        modifier = modifier
-//    )
-//}
-//
-//@Preview(showBackground = true)
-//@Composable
-//fun GreetingPreview() {
-//    SightingsTheme {
-//        Greeting("Android")
-//    }
-//}
