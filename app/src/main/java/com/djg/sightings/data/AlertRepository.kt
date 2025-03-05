@@ -41,7 +41,6 @@ class AlertRepository(private val alertDao: AlertDao) {
         return earthRadiusKm * c
     }
 
-    // In your repository:
     fun alertsWithinRadius(lat: Double, lon: Double, radiusKm: Double): Flow<List<Alert>> {
         val bbox = calculateBoundingBox(lat, lon, radiusKm)
         val candidateAlerts =

@@ -34,7 +34,7 @@ fun AlertsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     Column(modifier = modifier.fillMaxSize()) {
-        Text("alerts")
+        Text("Alerts")
         LocationPermission(viewModel = viewModel)
         AlertList(alerts = uiState.alerts)
     }

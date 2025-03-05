@@ -29,7 +29,7 @@ class LocationService(private val context: Context) {
     @OptIn(ExperimentalCoroutinesApi::class)
     val locationFlow = _locationPermissionState.filter { it }.flatMapLatest { permissionGranted ->
         if (permissionGranted) {
-            _getLocationFlow()
+            getOrThrowLocationFlow()
         } else {
             emptyFlow()
         }
@@ -44,7 +44,6 @@ class LocationService(private val context: Context) {
     }
 
     private fun checkLocationPermission() {
-        // Request location updates with the location request and callback.
         _locationPermissionState.value = ActivityCompat.checkSelfPermission(
             context,
             Manifest.permission.ACCESS_FINE_LOCATION
@@ -53,13 +52,12 @@ class LocationService(private val context: Context) {
 
     // NOTE this will throw a SecurityException if the permission is not granted
     @SuppressLint("MissingPermission")
-    private fun _getLocationFlow(): Flow<Location> = callbackFlow {
-        // Build the location request using the new builder API.
+    private fun getOrThrowLocationFlow(): Flow<Location> = callbackFlow {
         val locationRequest = LocationRequest.Builder(
             Priority.PRIORITY_HIGH_ACCURACY,
             5000,
         )
-            .setMinUpdateIntervalMillis(3000L) // Fastest rate for location updates.
+            .setMinUpdateIntervalMillis(3000L)
             .build()
 
         val locationCallback = object : LocationCallback() {
@@ -75,7 +73,6 @@ class LocationService(private val context: Context) {
             Looper.getMainLooper()
         )
 
-        // Clean up when the flow collection is cancelled.
         awaitClose {
             fusedLocationClient.removeLocationUpdates(locationCallback)
         }
