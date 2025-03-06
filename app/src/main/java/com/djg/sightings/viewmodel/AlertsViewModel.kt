@@ -61,6 +61,12 @@ class AlertsViewModel(
         }
     }
 
+    fun onClickAlert(alert: Alert) {
+        ioScope.launch {
+            alertRepository.updateAlert(alert.copy(isRead = true))
+        }
+    }
+
 
     fun onLocationPermissionChanged(granted: Boolean) {
         if (granted) {

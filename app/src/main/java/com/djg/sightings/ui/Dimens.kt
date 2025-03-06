@@ -5,5 +5,6 @@ import androidx.compose.ui.unit.dp
 class Dimens {
     companion object {
         val paddingSmall = 4.dp
+        val paddingLarge = 16.dp
     }
 }

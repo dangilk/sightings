@@ -1,5 +1,6 @@
 package com.djg.sightings.data
 
+import com.djg.sightings.notification.AlertNotificationManager
 import com.djg.sightings.service.LocationService
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -12,22 +13,21 @@ import kotlin.random.Random
 
 class MockData(
     private val locationService: LocationService,
-    private val alertRepository: AlertRepository,
+    private val alertNotificationManager: AlertNotificationManager,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) {
     suspend fun scheduleMockAlerts() {
         withContext(ioDispatcher) {
             locationService.locationFlow.collect { location ->
                 while (true) {
-                    alertRepository.insertAlerts(
-                        createMockAlerts(
-                            centerLat = location.latitude,
-                            centerLon = location.longitude,
-                            count = 1,
-                            radius = 40,
-                        )
-                    )
-                    delay(1000)
+                    val alert = createMockAlerts(
+                        centerLat = location.latitude,
+                        centerLon = location.longitude,
+                        count = 1,
+                        radius = 25,
+                    ).first()
+                    alertNotificationManager.handleAlert(alert)
+                    delay(Random.nextLong(2000L, 10001L))
                 }
             }
         }
@@ -71,7 +71,7 @@ fun createMockAlerts(
         // Create and add the Alert object
         alerts.add(
             Alert(
-                title = "Alert! ($lat, $lon)",
+                title = "Alert! ${String.format("%.2f", distance)} km away",
                 date = date,
                 latitude = lat,
                 longitude = lon,

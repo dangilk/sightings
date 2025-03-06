@@ -51,6 +51,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.play.services.location)
+    implementation(libs.androidx.datastore.preferences)
 
     // Retrofit with Moshi for JSON parsing
     implementation(libs.retrofit)

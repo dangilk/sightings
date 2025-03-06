@@ -26,6 +26,10 @@ class AlertRepository(private val alertDao: AlertDao) {
         alertDao.deleteAlert(alert)
     }
 
+    suspend fun deleteAllAlerts() {
+        alertDao.deleteAllAlerts()
+    }
+
     suspend fun getAllAlerts(): List<Alert> {
         return alertDao.getAllAlerts()
     }
